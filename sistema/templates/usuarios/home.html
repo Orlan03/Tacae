@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}TACAE - Inicio{% endblock %}
+
+{% block content %}
+<div class="notifications-fixed">
+    <div class="bell-icon" onclick="toggleDropdown()">
+        <img src="{% static 'img/campana.png' %}" alt="Campana">
+        <span class="badge">{{ notificaciones_no_leidas|length }}</span>
+    </div>
+      
+    <div class="dropdown-content" id="notificationsDropdown">
+      {% if notificaciones_no_leidas %}
+        {% for noti in notificaciones_no_leidas %}
+          <div class="dropdown-item">
+            {{ noti.mensaje }}
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="dropdown-item">No tienes notificaciones</div>
+      {% endif %}
+      <div class="dropdown-footer">
+        <a href="{% url 'eventos:todas_notificaciones' %}">Ver todo</a>
+      </div>
+    </div>
+  </div>
+  
+  <header class="home-header">
+    <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="home-logo">
+    <h1>Bienvenido a TACAE</h1>
+    <p>Sistema de Gestión Empresarial</p>
+  </header>
+
+  <section class="home-content">
+    {% if user.is_authenticated and user.is_staff %}
+      <div class="card">
+        <h2>Gestión de Empleados</h2>
+        <p>Administra la información de tus empleados de forma eficiente.</p>
+        <a href="{% url 'lista_empleados' %}" class="card-btn">Ver Empleados</a>
+      </div>
+    {% endif %}
+    <div class="card">
+      <h2>INFORME PERICIALES GRUPO TACAE</h2>
+      <p>Sube y organiza documentos de manera segura.</p>
+      <a href="{% url 'listar_carpeta' %}" class="card-btn">Ver Documentos</a>
+    </div>
+    <div class="card">
+        <h2>Eventos</h2>
+        <p>Organiza tus eventos aqui.</p>
+        <a href="{% url 'eventos:crear_evento' %}" class="card-btn">Crear Evento</a>
+
+    </div>
+    <div class="card">
+      <h2>Cerrar Sesión</h2>
+      <p>Genera informes y analiza el rendimiento de la empresa.</p>
+      <a href="{% url 'login' %}" class="card-btn">Cerrar Sesión</a>
+    </div>
+  </section>
+</div>
+
+<style>
+  /* Estilos globales */
+  body {
+    background: #f5f7fa;
+    font-family: 'Helvetica', Arial, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  .home-wrapper {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+  /* Encabezado */
+  .home-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .home-logo {
+    width: 120px;
+    border-radius: 8px;
+  }
+  .home-header h1 {
+    font-size: 2rem;
+    color: #003366;
+    margin: 10px 0;
+  }
+  .home-header p {
+    font-size: 1.1rem;
+    color: #555;
+  }
+  /* Contenido principal */
+  .home-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  .card h2 {
+    font-size: 1.5rem;
+    color: #003366;
+    margin-bottom: 10px;
+  }
+  .card p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 15px;
+  }
+  .card-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #003366;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+  .card-btn:hover {
+    background: #002244;
+  }
+  
+  /* Estilos para la campanita de notificaciones fija en la esquina superior derecha */
+  .notifications-fixed {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+  .bell-icon img {
+  width: 30px;    /* Ajusta este valor al tamaño deseado */
+  height: auto;   /* Mantiene la proporción de la imagen */
+  object-fit: contain; /* Asegura que la imagen se escale correctamente dentro del contenedor */
+    }
+
+  .bell-icon {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 24px;
+    color: #003366;
+  }
+  .bell-icon .badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #d32f2f;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 50%;
+    padding: 2px 6px;
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 30px;
+    right: 0;
+    width: 250px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .dropdown-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #333;
+  }
+  .dropdown-item:last-child {
+    border-bottom: none;
+  }
+  .dropdown-footer {
+    padding: 10px;
+    text-align: center;
+    background: #f9f9f9;
+  }
+  .dropdown-footer a {
+    color: #0277bd;
+    text-decoration: none;
+  }
+  .dropdown-footer a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<script>
+  function toggleDropdown() {
+    var dropdown = document.getElementById("notificationsDropdown");
+    if (dropdown.style.display === "block") {
+      dropdown.style.display = "none";
+    } else {
+      dropdown.style.display = "block";
+    }
+  }
+  window.onclick = function(event) {
+    var dropdown = document.getElementById("notificationsDropdown");
+    if (!event.target.closest('.bell-icon')) {
+      dropdown.style.display = "none";
+    }
+  }
+</script>
+{% endblock %}

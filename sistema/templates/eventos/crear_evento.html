@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Crear Evento - TACAE{% endblock %}
+
+{% block content %}
+<div class="evento-container">
+  <h2>Crear Evento</h2>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-submit">Crear Evento</button>
+  </form>
+</div>
+
+<style>
+  .evento-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 25px;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  .evento-container h2 {
+    font-size: 1.8rem;
+    color: #003366;
+    margin-bottom: 20px;
+  }
+  form {
+    text-align: left;
+  }
+  form p {
+    margin-bottom: 15px;
+  }
+  label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .btn-submit {
+    display: inline-block;
+    width: 100%;
+    padding: 12px;
+    background: #003366;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 15px;
+  }
+  .btn-submit:hover {
+    background: #002244;
+  }
+</style>
+{% endblock %}

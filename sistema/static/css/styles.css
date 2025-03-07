@@ -1,0 +1,118 @@
+/* Establece un color de fondo suave y el texto en color oscuro */
+body {
+    background-color: #f4f6f9;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+/* Barra de navegación personalizada con fondo azul */
+.navbar {
+    background-color: #007bff !important;
+    padding: 15px;
+}
+
+.navbar a {
+    color: white !important;
+    font-weight: bold;
+}
+
+.navbar a:hover {
+    color: #ffd700 !important;
+}
+
+/* Estilo del contenedor principal */
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+/* Títulos y subtítulos con color azul */
+h1, h2, h3 {
+    color: #007bff;
+}
+
+/* Estilo para los botones */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+/* Formulario */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+input, select, button {
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1rem;
+}
+
+/* Estilos para el pie de página */
+footer {
+    background-color: #007bff;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* Mensajes de alerta */
+.alert {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+/* Estilo para tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table th, table td {
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    text-align: left;
+}
+
+table th {
+    background-color: #007bff;
+    color: white;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tr:hover {
+    background-color: #e9ecef;
+}

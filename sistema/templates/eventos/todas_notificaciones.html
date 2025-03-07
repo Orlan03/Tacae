@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Todas las Notificaciones - TACAE{% endblock %}
+
+{% block content %}
+<div class="notificaciones-container">
+  <h2>Todas las Notificaciones</h2>
+  {% if notificaciones %}
+    <ul class="notificaciones-list">
+      {% for noti in notificaciones %}
+        <li class="notificacion-item {% if noti.leida %}leida{% else %}no-leida{% endif %}">
+          <p>{{ noti.mensaje }}</p>
+          <small>Creado: {{ noti.fecha_creacion|date:"d/m/Y H:i" }}</small>
+          {% if noti.leida %}
+            <span class="badge badge-read">Leída</span>
+          {% else %}
+            <span class="badge badge-unread">No Leída</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No tienes notificaciones.</p>
+  {% endif %}
+  <a href="{% url 'home' %}" class="btn btn-back">Volver al inicio</a>
+</div>
+
+<style>
+  .notificaciones-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-align: left;
+  }
+  .notificaciones-container h2 {
+    text-align: center;
+    color: #003366;
+    margin-bottom: 20px;
+  }
+  .notificaciones-list {
+    list-style: none;
+    padding: 0;
+  }
+  .notificacion-item {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+  }
+  .notificacion-item:last-child {
+    border-bottom: none;
+  }
+  .badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-left: 10px;
+  }
+  .badge-read {
+    background: #4caf50;
+    color: #fff;
+  }
+  .badge-unread {
+    background: #d32f2f;
+    color: #fff;
+  }
+  .btn-back {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background: #0277bd;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+  }
+  .btn-back:hover {
+    background: #01579b;
+  }
+</style>
+{% endblock %}
