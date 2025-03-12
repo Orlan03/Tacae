@@ -1,17 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Crear Evento - TACAE{% endblock %}
+{% block title %}Crear Proceso - TACAE{% endblock %}
 
 {% block content %}
-<div class="evento-container">
-  <h2>Crear Evento</h2>
-  <form method="post" novalidate>
+<div class="proceso-container">
+  <h2>Registrar Proceso</h2>
+  <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn-submit">Crear Evento</button>
+    <button type="submit" class="btn-submit">Registrar Proceso</button>
   </form>
 </div>
+{% endblock %}
 
 <style>
   .evento-container {

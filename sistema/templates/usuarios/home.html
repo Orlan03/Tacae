@@ -24,15 +24,15 @@
         <a href="{% url 'eventos:todas_notificaciones' %}">Ver todo</a>
       </div>
     </div>
-  </div>
+</div>
   
-  <header class="home-header">
+<header class="home-header">
     <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="home-logo">
     <h1>Bienvenido a TACAE</h1>
     <p>Sistema de Gestión Empresarial</p>
-  </header>
+</header>
 
-  <section class="home-content">
+<section class="home-content">
     {% if user.is_authenticated and user.is_staff %}
       <div class="card">
         <h2>Gestión de Empleados</h2>
@@ -40,15 +40,13 @@
         <a href="{% url 'lista_empleados' %}" class="card-btn">Ver Empleados</a>
       </div>
     {% endif %}
+
     <div class="card">
       <h2>INFORME PERICIALES GRUPO TACAE</h2>
-      <p>Sube y organiza documentos de manera segura.</p>
-      <a href="{% url 'listar_carpeta' %}" class="card-btn">Ver Documentos</a>
-    </div>
-    <div class="card">
-        <h2>Eventos</h2>
-        <p>Organiza tus eventos aqui.</p>
-        <a href="{% url 'eventos:crear_evento' %}" class="card-btn">Crear Evento</a>
+      <p>Gestiona carpetas y documentos de forma organizada.</p>
+      <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-primary">Ingresar</a>
+  </div>
+ 
 
     </div>
     <div class="card">
@@ -56,7 +54,7 @@
       <p>Genera informes y analiza el rendimiento de la empresa.</p>
       <a href="{% url 'login' %}" class="card-btn">Cerrar Sesión</a>
     </div>
-  </section>
+</section>
 </div>
 
 <style>
@@ -139,11 +137,10 @@
     z-index: 1000;
   }
   .bell-icon img {
-  width: 30px;    /* Ajusta este valor al tamaño deseado */
-  height: auto;   /* Mantiene la proporción de la imagen */
-  object-fit: contain; /* Asegura que la imagen se escale correctamente dentro del contenedor */
-    }
-
+    width: 30px;
+    height: auto;
+    object-fit: contain;
+  }
   .bell-icon {
     position: relative;
     display: inline-block;

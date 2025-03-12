@@ -1,70 +1,96 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Carpeta, Documento
+from .forms import CarpetaForm, DocumentoForm
+login_required
+from django.shortcuts import render
+from .models import Carpeta
 
-@login_required
-def listar_carpeta(request, carpeta_id=None):
-    """
-    Muestra la carpeta actual (o raíz si carpeta_id es None),
-    junto con sus subcarpetas y documentos.
-    """
-    if carpeta_id:
-        carpeta_actual = get_object_or_404(Carpeta, id=carpeta_id)
-        subcarpetas = carpeta_actual.subcarpetas.all()
-        documentos = carpeta_actual.documentos.all()
-    else:
-        carpeta_actual = None
-        subcarpetas = Carpeta.objects.filter(padre__isnull=True)
-        documentos = []
+def listar_carpetas(request):
+    # Crear o verificar la carpeta "Informes Periciales Grupo TACAE"
+    informes_periciales, created_ip = Carpeta.objects.get_or_create(nombre="Informes Periciales Grupo TACAE", padre=None)
 
-    return render(request, 'carpeta/listar_carpeta.html', {
-        'carpeta_actual': carpeta_actual,
-        'subcarpetas': subcarpetas,
-        'documentos': documentos,
-    })
-@login_required
+    # Crear o verificar la carpeta "Control de Procesos"
+    control_procesos, created_cp = Carpeta.objects.get_or_create(nombre="Control de Procesos", padre=None)
+
+    # Obtener todas las carpetas raíz (las dos principales)
+    carpetas = Carpeta.objects.filter(padre=None)
+
+    return render(request, 'carpetas/listar_carpetas.html', {'carpetas': carpetas})
+
+
+login_required
 def crear_carpeta(request, carpeta_id=None):
+    """ Crea una nueva carpeta o subcarpeta dentro de otra carpeta. """
+    carpeta_padre = None
+    if carpeta_id:
+        carpeta_padre = get_object_or_404(Carpeta, id=carpeta_id)  # Buscar la carpeta padre si hay una
+
     if request.method == 'POST':
-        nombre_carpeta = request.POST.get('nombre')
-        carpeta_padre = None
-        if carpeta_id:
-            carpeta_padre = get_object_or_404(Carpeta, id=carpeta_id)
+        form = CarpetaForm(request.POST)
+        if form.is_valid():
+            nueva_carpeta = form.save(commit=False)
+            nueva_carpeta.padre = carpeta_padre  # Asignar la carpeta padre si existe
+            nueva_carpeta.save()
+            
+            # Redirección corregida
+            if nueva_carpeta.padre:
+                return redirect('carpetas:ver_carpeta', carpeta_id=nueva_carpeta.padre.id)
+            else:
+                return redirect('carpetas:listar_carpetas')  # Si es una carpeta raíz, ir a la lista de carpetas
 
-        Carpeta.objects.create(nombre=nombre_carpeta, padre=carpeta_padre)
+    else:
+        form = CarpetaForm()
 
-        if carpeta_id:
-            return redirect('listar_carpeta', carpeta_id=carpeta_id)
-        else:
-            return redirect('listar_carpeta')  # Raíz
+    return render(request, 'carpetas/crear_carpeta.html', {'form': form, 'carpeta_padre': carpeta_padre})
 
-    return render(request, 'carpeta/crear_carpeta.html', {'carpeta_id': carpeta_id})
+@login_required
+def crear_subcarpeta(request, carpeta_id):
+    carpeta_padre = get_object_or_404(Carpeta, id=carpeta_id)
+    if request.method == "POST":
+        form = CarpetaForm(request.POST)
+        if form.is_valid():
+            subcarpeta = form.save(commit=False)
+            subcarpeta.padre = carpeta_padre  # ✔ Establecer relación con la carpeta padre
+            subcarpeta.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=carpeta_padre.id)
+    else:
+        form = CarpetaForm()
+
+    return render(request, 'carpetas/crear_carpeta.html', {'form': form, 'carpeta_padre': carpeta_padre})
+
 
 @login_required
 def subir_documento(request, carpeta_id):
-    carpeta_actual = get_object_or_404(Carpeta, id=carpeta_id)
-    if request.method == 'POST':
-        nombre_doc = request.POST.get('nombre')
-        archivo_subido = request.FILES.get('archivo')
-        Documento.objects.create(
-            nombre=nombre_doc,
-            archivo=archivo_subido,
-            carpeta=carpeta_actual
-        )
-        return redirect('listar_carpeta', carpeta_id=carpeta_id)
+    """Vista para subir documentos a una carpeta"""
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
 
-    return render(request, 'carpeta/subir_documento.html', {'carpeta_actual': carpeta_actual})
+    if request.method == 'POST':
+        form = DocumentoForm(request.POST, request.FILES)
+        if form.is_valid():
+            documento = form.save(commit=False)
+            documento.carpeta = carpeta
+            documento.save()
+            return redirect('carpetas:ver_carpeta', carpeta_id=carpeta.id)
+    else:
+        form = DocumentoForm()
+
+    return render(request, 'carpetas/subir_documento.html', {'form': form, 'carpeta': carpeta})
+
+
+@login_required
+def ver_carpeta(request, carpeta_id):
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
+    subcarpetas = carpeta.subcarpetas.all()
+    documentos = carpeta.documentos.all()
+    return render(request, 'carpetas/ver_carpeta.html', {
+        'carpeta': carpeta,
+        'subcarpetas': subcarpetas,
+        'documentos': documentos
+    })
+
 @login_required
 def eliminar_carpeta(request, carpeta_id):
     carpeta = get_object_or_404(Carpeta, id=carpeta_id)
-    padre_id = carpeta.padre.id if carpeta.padre else None
     carpeta.delete()
-    if padre_id:
-        return redirect('listar_carpeta', carpeta_id=padre_id)
-    return redirect('listar_carpeta')
-
-@login_required
-def eliminar_documento(request, documento_id):
-    documento = get_object_or_404(Documento, id=documento_id)
-    carpeta_id = documento.carpeta.id
-    documento.delete()
-    return redirect('listar_carpeta', carpeta_id=carpeta_id)
+    return redirect('carpetas:listar_carpetas')

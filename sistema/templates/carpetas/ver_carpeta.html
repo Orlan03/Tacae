@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}📂 {{ carpeta.nombre }} - TACAE{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <h2>📁 {{ carpeta.nombre }}</h2>
+
+        <!-- Mostrar Carpeta Padre SOLO si existe -->
+        <p>Carpeta actual: <strong>{{ carpeta.nombre }}</strong></p>
+        {% if carpeta.padre %}
+            <p>Carpeta padre: <strong>{{ carpeta.padre.nombre }}</strong></p>
+        {% else %}
+            <p>🚨 Esta carpeta NO tiene padre.</p>
+        {% endif %}
+
+        <!-- Acciones -->
+        <div class="actions">
+            <a href="{% url 'carpetas:crear_subcarpeta' carpeta.id %}" class="btn btn-primary">➕ Crear Subcarpeta</a>
+            <a href="{% url 'carpetas:subir_documento' carpeta.id %}" class="btn btn-success">📤 Subir Documento</a>
+        </div>
+    </div>
+
+    <!-- SUBCARPETAS -->
+    <div class="folder-section">
+        <h3>📂 Subcarpetas</h3>
+        {% if carpeta.subcarpetas.all %}
+            <ul class="folder-list">
+                {% for subcarpeta in carpeta.subcarpetas.all %}
+                    <li class="folder-item">
+                        <a href="{% url 'carpetas:ver_carpeta' subcarpeta.id %}" class="folder-link">
+                            📁 {{ subcarpeta.nombre }}
+                        </a>
+                        <a href="{% url 'carpetas:eliminar_carpeta' subcarpeta.id %}" class="btn btn-danger"
+                           onclick="return confirm('¿Eliminar esta subcarpeta?');">🗑️</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty">🚫 No hay subcarpetas.</p>
+        {% endif %}
+    </div>
+
+    <!-- DOCUMENTOS -->
+    <div class="document-section">
+        <h3>📄 Documentos</h3>
+        {% if carpeta.documentos.all %}
+            <ul class="document-list">
+                {% for documento in carpeta.documentos.all %}
+                    <li class="document-item">
+                        <a href="{{ documento.archivo.url }}" target="_blank" class="document-link">
+                            📄 {{ documento.nombre }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty">📂 No hay documentos en esta carpeta.</p>
+        {% endif %}
+    </div>
+
+    <!-- BOTÓN PARA REGISTRAR PROCESO -->
+    {% if carpeta.padre and carpeta.padre.nombre.strip == "Procesos Pendientes" %}
+        <a href="{% url 'procesos:registrar_proceso' %}" class="btn btn-success">📋 Registrar Nuevo Proceso</a>
+
+    {% endif %}
+
+
+
+    <!-- BOTÓN DE REGRESO -->
+    <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-secondary">⬅ Volver</a>
+</div>
+
+<style>
+    /* Contenedor principal */
+    .container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    /* Encabezado */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header h2 {
+        font-size: 1.8rem;
+        color: #003366;
+    }
+
+    /* Secciones de carpetas y documentos */
+    .folder-section, .document-section {
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    .folder-section h3, .document-section h3 {
+        font-size: 1.5rem;
+        color: #003366;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 5px;
+    }
+
+    /* Listas */
+    .folder-list, .document-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .folder-item, .document-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8f9fa;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    /* Links */
+    .folder-link, .document-link {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #0277bd;
+        text-decoration: none;
+    }
+
+    .folder-link:hover, .document-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Botón de eliminar */
+    .btn-danger {
+        background: #d9534f;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+
+    .btn-danger:hover {
+        background: #c9302c;
+    }
+
+    /* Mensaje si no hay contenido */
+    .empty {
+        font-size: 1.1rem;
+        color: #777;
+        margin-top: 10px;
+    }
+
+    /* Botón de volver */
+    .btn-secondary {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 15px;
+        background: #6c757d;
+        color: white;
+        border-radius: 5px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+</style>
+
+{% endblock %}

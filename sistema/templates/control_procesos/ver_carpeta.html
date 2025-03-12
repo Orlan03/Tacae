@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Carpeta: {{ carpeta.nombre }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Carpeta: {{ carpeta.nombre }}</h2>
+    <h3>Procesos Asociados</h3>
+    <ul>
+        {% for proceso in procesos %}
+        <li>{{ proceso.proceso }}</li>
+        {% empty %}
+        <li>No hay procesos en esta carpeta.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %} 

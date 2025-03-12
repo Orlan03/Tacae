@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Registrar Proceso - TACAE{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>📋 Registrar Nuevo Proceso</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Guardar Proceso</button>
+    </form>
+    <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-secondary">⬅ Volver</a>
+</div>
+{% endblock %}

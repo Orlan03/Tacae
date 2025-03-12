@@ -17,8 +17,7 @@ import os
 # settings.py
 
 
-
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOGIN_URL = 'login'  # Nombre de la URL donde está la vista de login
 
 
@@ -48,6 +47,9 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'aplicaciones.carpetas',
     'aplicaciones.eventos',
+    'aplicaciones.control_procesos'
+    
+    
     
     
 ]
@@ -75,7 +77,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'aplicaciones.eventos.context_processors.notificaciones_context_processor', 
+                
             ],
         },
     },
@@ -144,4 +146,4 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

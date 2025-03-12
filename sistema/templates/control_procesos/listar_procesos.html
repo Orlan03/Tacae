@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Lista de Procesos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Lista de Procesos</h2>
+    <a href="{% url 'control_procesos:registrar_proceso' %}" class="btn btn-primary">➕ Registrar Nuevo Proceso</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Proceso</th>
+                <th>Responsable</th>
+                <th>Carpeta</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for proceso in procesos %}
+            <tr>
+                <td>{{ proceso.proceso }}</td>
+                <td>{{ proceso.responsable }}</td>
+                <td>{{ proceso.carpeta.nombre }}</td>
+                <td>
+                    <a href="{% url 'carpetas:ver_carpeta' proceso.carpeta.id %}" class="btn btn-info">Ver Carpeta</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No hay procesos registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
