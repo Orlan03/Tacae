@@ -5,6 +5,9 @@ from .forms import CarpetaForm, DocumentoForm
 login_required
 from django.shortcuts import render
 from .models import Carpeta
+from aplicaciones.control_procesos.models import Proceso
+from django.contrib import messages
+
 
 def listar_carpetas(request):
     # Crear o verificar la carpeta "Informes Periciales Grupo TACAE"
@@ -83,14 +86,28 @@ def ver_carpeta(request, carpeta_id):
     carpeta = get_object_or_404(Carpeta, id=carpeta_id)
     subcarpetas = carpeta.subcarpetas.all()
     documentos = carpeta.documentos.all()
+    procesos = Proceso.objects.filter(carpeta=carpeta)
+    
     return render(request, 'carpetas/ver_carpeta.html', {
+        'procesos': procesos, 
         'carpeta': carpeta,
         'subcarpetas': subcarpetas,
         'documentos': documentos
+        
     })
 
 @login_required
 def eliminar_carpeta(request, carpeta_id):
+    """
+    Elimina la carpeta especificada y redirige al usuario a la carpeta padre
+    si existe, o a la lista de carpetas en caso contrario.
+    """
     carpeta = get_object_or_404(Carpeta, id=carpeta_id)
+    # Guardar el ID de la carpeta padre (si existe)
+    padre_id = carpeta.padre.id if carpeta.padre else None
     carpeta.delete()
-    return redirect('carpetas:listar_carpetas')
+    messages.success(request, "Carpeta eliminada exitosamente.")
+    if padre_id:
+        return redirect('carpetas:ver_carpeta', carpeta_id=padre_id)
+    else:
+        return redirect('carpetas:listar_carpetas')

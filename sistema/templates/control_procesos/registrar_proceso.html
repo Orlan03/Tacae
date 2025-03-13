@@ -1,14 +1,171 @@
-{% extends "base.html" %}
-{% block title %}Registrar Proceso - TACAE{% endblock %}
 
-{% block content %}
+{% load static %}
+
+
+{% load static %}
+
 <div class="container">
-    <h2>📋 Registrar Nuevo Proceso</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Guardar Proceso</button>
-    </form>
-    <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-secondary">⬅ Volver</a>
+    <!-- Cabecera con Logo -->
+    <div class="header">
+        <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="logo">
+        <h2 class="title">Registrar Nuevo Proceso</h2>
+    </div>
+
+    <!-- Tarjeta del Formulario -->
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Seleccionar Subcarpeta -->
+            <div class="input-group">
+                <label for="id_carpeta">📂 Seleccionar Subcarpeta:</label>
+                <select name="carpeta_id" class="custom-select" required>
+                    <option value="" disabled selected>🔽 Seleccione una subcarpeta</option>
+                    {% for subcarpeta in subcarpetas %}
+                        <optgroup label="📁 {{ subcarpeta.nombre }}">
+                            {% for subsub in subcarpeta.subcarpetas.all %}
+                                <option value="{{ subsub.id }}">↳ 📂 {{ subsub.nombre }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Campos del Formulario -->
+            <div class="input-group">
+                {{ form.as_p }}
+            </div>
+
+            <!-- Botón Guardar -->
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">💾 Guardar Proceso</button>
+            </div>
+        </form>
+
+        <!-- Botón Volver -->
+        <div class="button-group">
+            <a href="{% url 'carpetas:ver_carpeta' carpeta_padre.id %}" class="btn btn-secondary">⬅ Volver</a>
+        </div>
+    </div>
 </div>
-{% endblock %}
+
+<!-- 🎨 Estilos Personalizados -->
+<style>
+    /* 🎨 Estilos Generales */
+    body {
+        font-family: 'Arial', sans-serif;
+        background: #121212;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    /* 📌 Contenedor */
+    .container {
+        max-width: 600px;
+        width: 100%;
+        background: #1E1E1E;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+        text-align: center;
+    }
+
+    /* 🏢 Cabecera con Logo */
+    .header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .logo {
+        width: 180px;
+        margin-bottom: 10px;
+    }
+
+    .title {
+        font-size: 24px;
+        color: #007BFF;
+        font-weight: bold;
+    }
+
+    /* 📄 Tarjeta del Formulario */
+    .form-card {
+        background: #222222;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* 🔽 Select Personalizado */
+    .custom-select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 2px solid #007BFF;
+        background: #ffffff;
+        color: #003366;
+        font-size: 1rem;
+    }
+
+    .custom-select:focus {
+        border-color: #0056b3;
+        outline: none;
+        box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+    }
+
+    /* 📝 Campos del Formulario */
+    .input-group {
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    .input-group label {
+        font-weight: bold;
+        color: #007BFF;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    /* 🎛️ Botones */
+    .button-group {
+        margin-top: 20px;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 12px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        width: 100%;
+        transition: 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #007BFF;
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: #0056b3;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+        margin-top: 10px;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+</style>

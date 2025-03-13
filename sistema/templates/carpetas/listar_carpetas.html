@@ -1,103 +1,36 @@
 {% extends "base.html" %}
-{% load static %}
-
-{% block title %}Carpetas - TACAE{% endblock %}
+{% block title %}📁 Listado de Carpetas{% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="header">
-        <h2>📂 INFORME PERICIALES GRUPO TACAE</h2>
-        <p>Gestiona carpetas y documentos de forma organizada.</p>
-        <!-- Botón para crear carpetas raíz -->
-        <a href="{% url 'carpetas:crear_carpeta' %}" class="btn btn-success">➕ Crear Carpeta</a>
-    </div>
-
-    <div class="folder-container">
-        {% if carpetas %}
-            <ul class="folder-list">
-                {% for carpeta in carpetas %}
-                    <li class="folder-item">
-                        <a href="{% url 'carpetas:ver_carpeta' carpeta.id %}" class="folder-link">
-                            📁 {{ carpeta.nombre }}
-                        </a>
-                        <div class="folder-actions">
-                            <a href="{% url 'carpetas:eliminar_carpeta' carpeta.id %}" class="btn btn-danger"
-                               onclick="return confirm('¿Eliminar esta carpeta?');">🗑️</a>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="empty">🚫 No hay carpetas creadas.</p>
-        {% endif %}
+    <h2>📁 Carpetas Disponibles</h2>
+    <div class="grid-container">
+        {% for carpeta in carpetas %}
+            <div class="folder-card">
+                <a href="{% url 'carpetas:ver_carpeta' carpeta.id %}" class="folder-link">
+                    📁 {{ carpeta.nombre }}
+                </a>
+            </div>
+        {% empty %}
+            <p>No hay carpetas disponibles.</p>
+        {% endfor %}
     </div>
 </div>
 
 <style>
-    /* Contenedor principal */
-    .container {
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 20px;
-        background: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-
-    /* Encabezado */
-    .header {
-        margin-bottom: 20px;
-    }
-
-    .header h2 {
-        font-size: 1.8rem;
-        color: #003366;
-    }
-
-    .header p {
-        font-size: 1.1rem;
-        color: #555;
-    }
-
-    /* Botón de crear carpeta */
-    .btn {
-        display: inline-block;
-        padding: 10px 15px;
-        text-decoration: none;
-        border-radius: 4px;
-        font-weight: bold;
-        transition: background 0.3s ease;
-    }
-
-    .btn-success {
-        background: #28a745;
-        color: white;
-    }
-
-    .btn-success:hover {
-        background: #218838;
-    }
-
-    /* Contenedor de carpetas */
-    .folder-container {
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
         margin-top: 20px;
     }
 
-    .folder-list {
-        list-style: none;
-        padding: 0;
-    }
-
-    .folder-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .folder-card {
         background: #f8f9fa;
-        padding: 10px 15px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
     }
 
     .folder-link {
@@ -110,25 +43,5 @@
     .folder-link:hover {
         text-decoration: underline;
     }
-
-    /* Botón de eliminar */
-    .btn-danger {
-        background: #d9534f;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 4px;
-    }
-
-    .btn-danger:hover {
-        background: #c9302c;
-    }
-
-    /* Mensaje si no hay carpetas */
-    .empty {
-        font-size: 1.1rem;
-        color: #777;
-        margin-top: 20px;
-    }
 </style>
-
 {% endblock %}
