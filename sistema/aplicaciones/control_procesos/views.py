@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Proceso
+from .models import Proceso, Respuesta, CuentaPorCobrar
 from aplicaciones.carpetas.models import Carpeta
-from .forms import ProcesoForm
+from .forms import ProcesoForm, RespuestaForm, CuentaPorCobrarForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -113,3 +113,109 @@ def editar_proceso(request, proceso_id):
         form = ProcesoForm(instance=proceso)
 
     return render(request, "control_procesos/editar_proceso.html", {"form": form, "proceso": proceso})
+
+
+##############################Respuestas#####################################3
+
+@login_required
+def registrar_respuesta(request, carpeta_id):
+    """Registra una nueva respuesta y la asocia a la carpeta correspondiente en 'Respuestas'"""
+    carpeta_respuesta = get_object_or_404(Carpeta, id=carpeta_id)
+
+    if request.method == "POST":
+        form = RespuestaForm(request.POST)
+        if form.is_valid():
+            respuesta = form.save(commit=False)
+
+            # 💡 Aquí aseguramos que la respuesta se guarda en la carpeta correcta
+            respuesta.carpeta = carpeta_respuesta  # 🔥 Asignamos la carpeta de 'Respuestas'
+            respuesta.save()
+
+            messages.success(request, "✅ Respuesta registrada correctamente.")
+            return redirect("carpetas:ver_carpeta", carpeta_id=carpeta_respuesta.id)
+
+    else:
+        form = RespuestaForm()
+
+    return render(request, "control_procesos/registrar_respuesta.html", {
+        "form": form,
+        "carpeta": carpeta_respuesta
+    })
+
+
+
+
+def obtener_todas_subcarpetas(carpeta, lista=None):
+    if lista is None:
+        lista = [carpeta]
+    for sub in carpeta.subcarpetas.all():
+        lista.append(sub)
+        obtener_todas_subcarpetas(sub, lista)
+    return lista
+
+
+@login_required
+def listar_respuestas_subcarpeta(request, carpeta_id):
+    """Lista las respuestas de una subcarpeta en 'Respuestas'."""
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
+    
+    # 🔥 IMPORTANTE: Filtrar solo respuestas que pertenecen a esta carpeta
+    respuestas = Respuesta.objects.filter(carpeta=carpeta)
+
+    return render(request, "control_procesos/listar_respuesta.html", {
+        "carpeta": carpeta,
+        "respuestas": respuestas
+    })
+    
+
+@login_required
+def listar_respuestas_por_nombre(request, carpeta_id):
+    # Esta carpeta es la de la sección de Respuestas (por ejemplo, "Cuenca")
+    carpeta_respuesta = get_object_or_404(Carpeta, id=carpeta_id)
+    # Filtra las respuestas de los procesos que estén en una carpeta con el mismo nombre
+    # y que pertenezcan a "Procesos Pendientes"
+    respuestas = Respuesta.objects.filter(
+        proceso__carpeta__nombre=carpeta_respuesta.nombre,
+        proceso__carpeta__padre__nombre="Procesos Pendientes"
+    )
+    return render(request, 'control_procesos/listar_respuestas_subcarpeta.html', {
+        'carpeta': carpeta_respuesta,
+        'respuestas': respuestas,
+    })
+    
+    
+######################### CUENTAS POR COBRAR #############################
+
+
+
+
+def registrar_cuenta_por_cobrar(request, carpeta_id):
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
+
+    if request.method == "POST":
+        form = CuentaPorCobrarForm(request.POST)
+        if form.is_valid():
+            cuenta = form.save(commit=False)
+            cuenta.carpeta = carpeta  # Relacionar con la carpeta
+            cuenta.save()
+            return redirect("carpetas:ver_carpeta", carpeta_id=carpeta.id)
+
+    else:
+        form = CuentaPorCobrarForm()
+
+    return render(request, "control_procesos/registrar_cuenta.html", {
+        "form": form,
+        "carpeta": carpeta
+    })
+
+
+def listar_cuentas_por_cobrar(request, carpeta_id):
+    carpeta = get_object_or_404(Carpeta, id=carpeta_id)
+    cuentas = carpeta.cuentas_por_cobrar.all()  # CORRECTO ✅
+
+
+
+    return render(request, "control_procesos/listar_cuentas.html", {
+        "cuentas": cuentas,
+        "carpeta": carpeta
+    })

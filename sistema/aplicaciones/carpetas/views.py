@@ -5,7 +5,7 @@ from .forms import CarpetaForm, DocumentoForm
 login_required
 from django.shortcuts import render
 from .models import Carpeta
-from aplicaciones.control_procesos.models import Proceso
+from aplicaciones.control_procesos.models import Proceso, CuentaPorCobrar
 from django.contrib import messages
 
 
@@ -21,6 +21,10 @@ def listar_carpetas(request):
     )
     procesos_pendientes, created_pp = Carpeta.objects.get_or_create(
         nombre="Respuestas", 
+        padre=control_procesos
+    )
+    procesos_pendientes, created_pp = Carpeta.objects.get_or_create(
+        nombre="Cuentas Por Cobrar", 
         padre=control_procesos
     )
     # Obtener todas las carpetas raíz (las dos principales)
@@ -88,21 +92,32 @@ def subir_documento(request, carpeta_id):
     return render(request, 'carpetas/subir_documento.html', {'form': form, 'carpeta': carpeta})
 
 
+
+
 @login_required
 def ver_carpeta(request, carpeta_id):
     carpeta = get_object_or_404(Carpeta, id=carpeta_id)
     subcarpetas = carpeta.subcarpetas.all()
     documentos = carpeta.documentos.all()
-    procesos = Proceso.objects.filter(carpeta=carpeta)
+    procesos = carpeta.procesos.all()
     
+    # Obtiene las cuentas por cobrar asociadas a la carpeta
+    cuentas = CuentaPorCobrar.objects.filter(carpeta=carpeta)
+
+    # ✅ Calcular los totales en Python y pasarlos al contexto
+    total_cobrado = sum(cuenta.cobro for cuenta in cuentas)
+    total_saldo = sum(cuenta.saldo for cuenta in cuentas)
+
     return render(request, 'carpetas/ver_carpeta.html', {
-        'procesos': procesos, 
+        'procesos': procesos,
         'carpeta': carpeta,
         'subcarpetas': subcarpetas,
-        'documentos': documentos
-        
+        'documentos': documentos,
+        'cuentas': cuentas,
+        'total_cobrado': total_cobrado,  # 🔥 Pasamos los totales al contexto
+        'total_saldo': total_saldo       # 🔥 Pasamos los totales al contexto
     })
-
+    
 @login_required
 def eliminar_carpeta(request, carpeta_id):
     """

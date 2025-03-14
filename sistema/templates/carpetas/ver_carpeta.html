@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block title %}📂 {{ carpeta.nombre }} - TACAE{% endblock %}
 
 {% block content %}
@@ -15,18 +16,23 @@
                     <a href="{% url 'carpetas:crear_subcarpeta' carpeta.id %}" class="btn btn-primary">
                         ➕ Crear Subcarpeta
                     </a>
-
                 {% elif carpeta.padre and carpeta.padre.nombre == "Procesos Pendientes" %}
                     <a href="{% url 'procesos:registrar_proceso' carpeta.id %}" class="btn btn-success">
                         📋 Registrar Nuevo Proceso
                     </a>
-
                 {% elif carpeta.nombre != "Control de Procesos" %}
                     <a href="{% url 'carpetas:crear_subcarpeta' carpeta.id %}" class="btn btn-primary">
                         ➕ Crear Subcarpeta
                     </a>
                     <a href="{% url 'carpetas:subir_documento' carpeta.id %}" class="btn btn-secondary">
                         📤 Subir Documento
+                    </a>
+                {% endif %}
+
+                <!-- ✅ Botón para registrar cuentas por cobrar -->
+                {% if carpeta.padre and carpeta.padre.nombre|lower == "cuentas por cobrar" %}
+                    <a href="{% url 'procesos:registrar_cuenta_por_cobrar' carpeta.id %}" class="btn btn-success mb-2">
+                        ➕ Registrar Cuenta por Cobrar
                     </a>
                 {% endif %}
             </div>
@@ -86,8 +92,6 @@
                                     <td>{{ proceso.responsable }}</td>
                                     <td>
                                         <a href="{% url 'control_procesos:listar_procesos' carpeta.id %}" class="btn btn-info btn-sm">🔍 Ver</a>
-
-
                                         <a href="#" class="btn btn-danger btn-sm">🗑 Eliminar</a>
                                     </td>
                                 </tr>
@@ -99,14 +103,59 @@
                 {% endif %}
             {% endif %}
 
-            <!-- 📌 BOTÓN DE VOLVER -->
+            <!-- 📌 SECCIÓN DE CUENTAS POR COBRAR -->
+            {% if carpeta.padre and carpeta.padre.nombre|lower == "cuentas por cobrar" %}
+                <h4 class="mt-4">📋 Cuentas por Cobrar</h4>
+
+                {% if cuentas %}
+                    <table class="table table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Proceso</th>
+                                <th>Actor</th>
+                                <th>Valor</th>
+                                <th>Cobrado</th>
+                                <th>Saldo</th>
+                                <th>Observación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cuenta in cuentas %}
+                                <tr>
+                                    <td>{{ cuenta.fecha|date:"d/m/Y" }}</td>
+                                    <td>{{ cuenta.proceso.proceso }}</td>
+                                    <td>{{ cuenta.proceso.responsable }}</td>
+                                    <td>${{ cuenta.proceso.valor }}</td>
+                                    <td>${{ cuenta.cobro|default:"0.00" }}</td>
+                                    <td>${{ cuenta.saldo|default:"0.00" }}</td>
+                                    <td>{{ cuenta.observacion|default:"-" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <!-- Fila de Totales -->
+                        <tfoot>
+                            <tr class="table-success">
+                                <td colspan="4"><strong>Total:</strong></td>
+                                <td><strong>${{ total_cobrado }}</strong></td>  
+                                <td><strong>${{ total_saldo }}</strong></td>  
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                {% else %}
+                    <p class="text-muted">🚫 No hay cuentas por cobrar en esta carpeta.</p>
+                {% endif %}
+            {% endif %}
+
+            <!-- 📌 BOTONES DE NAVEGACIÓN -->
             <div class="mt-3">
                 {% if carpeta.padre %}
                     <a href="{% url 'carpetas:ver_carpeta' carpeta.padre.id %}" class="btn btn-outline-secondary">⬅ Volver</a>
-                {% else %}
-                    <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-outline-primary">🏠 Volver al Inicio</a>
                 {% endif %}
+                <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-outline-primary">🏠 Inicio</a>
             </div>
+
         </div>
     </div>
 </div>

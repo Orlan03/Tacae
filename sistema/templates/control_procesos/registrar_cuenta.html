@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4>➕ Registrar Cobro</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label">Proceso</label>
+                    {{ form.proceso }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Monto Cobrado</label>
+                    {{ form.cobro }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Observaciones</label>
+                    {{ form.observacion }}
+                </div>
+
+                <button type="submit" class="btn btn-success">💾 Guardar</button>
+                <a href="{% url 'carpetas:ver_carpeta' carpeta.id %}" class="btn btn-secondary">⬅ Volver</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
