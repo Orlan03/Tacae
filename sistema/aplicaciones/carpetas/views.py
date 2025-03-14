@@ -15,7 +15,14 @@ def listar_carpetas(request):
 
     # Crear o verificar la carpeta "Control de Procesos"
     control_procesos, created_cp = Carpeta.objects.get_or_create(nombre="Control de Procesos", padre=None)
-
+    procesos_pendientes, created_pp = Carpeta.objects.get_or_create(
+        nombre="Procesos Pendientes", 
+        padre=control_procesos
+    )
+    procesos_pendientes, created_pp = Carpeta.objects.get_or_create(
+        nombre="Respuestas", 
+        padre=control_procesos
+    )
     # Obtener todas las carpetas raíz (las dos principales)
     carpetas = Carpeta.objects.filter(padre=None)
 

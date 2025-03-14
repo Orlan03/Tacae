@@ -40,7 +40,6 @@
                     <td>{{ proceso.observaciones|default:"-" }}</td>
                     <td>{{ proceso.carpeta.nombre }}</td>
                     <td>
-                        
                         <a href="{% url 'procesos:editar_proceso' proceso.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
                         <a href="{% url 'procesos:eliminar_proceso' proceso.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este proceso?')">🗑 Eliminar</a>
                     </td>
@@ -52,6 +51,11 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+
+    <!-- Botón de volver -->
+    <div class="back-button">
+        <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-secondary">⬅ Volver a Carpetas</a>
     </div>
 </div>
 
@@ -126,6 +130,23 @@
 
     .btn-info:hover, .btn-warning:hover, .btn-danger:hover {
         opacity: 0.8;
+    }
+
+    .back-button {
+        margin-top: 20px;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        padding: 10px 15px;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
     }
 </style>
 {% endblock %}
