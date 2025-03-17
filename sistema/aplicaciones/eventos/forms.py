@@ -1,15 +1,11 @@
+# aplicaciones/eventos/forms.py
 from django import forms
 from .models import Evento
 
 class EventoForm(forms.ModelForm):
     class Meta:
         model = Evento
-        fields = ['titulo', 'descripcion', 'fecha_evento']
+        fields = ['titulo', 'fecha_evento', 'descripcion']
         widgets = {
-            'fecha_evento': forms.DateInput(
-                attrs={
-                    'type': 'date',
-                    'class': 'form-control',  # Opcional, para estilizar con Bootstrap u otro framework
-                }
-            ),
+            'fecha_evento': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }

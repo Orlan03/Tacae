@@ -50,15 +50,20 @@ class RespuestaForm(forms.ModelForm):
 
 
 
-
 class CuentaPorCobrarForm(forms.ModelForm):
-    proceso = forms.ModelChoiceField(
-        queryset=Proceso.objects.all().order_by("carpeta__nombre", "proceso"),  # Ordenar por carpeta y proceso
-        label="Seleccione un Proceso",
-        widget=forms.Select(attrs={"class": "form-control selectpicker", "data-live-search": "true"})
-    )
-
     class Meta:
         model = CuentaPorCobrar
-        fields = ['proceso', 'cobro', 'observacion']
+        fields = ["proceso", "cobro", "observacion"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["cobro"].widget.attrs.update({
+            "class": "form-control bg-dark text-white border-success",
+            "placeholder": "Ingrese el monto cobrado"
+        })
+        self.fields["observacion"].widget.attrs.update({
+            "class": "form-control bg-dark text-white border-info",
+            "placeholder": "Ingrese una observación"
+        })
+
 

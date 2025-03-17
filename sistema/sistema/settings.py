@@ -46,12 +46,8 @@ INSTALLED_APPS = [
     'aplicaciones.usuarios',
     'widget_tweaks',
     'aplicaciones.carpetas',
-    'aplicaciones.eventos',
-    'aplicaciones.control_procesos'
-    
-    
-    
-    
+    'aplicaciones.control_procesos',
+    'aplicaciones.eventos'    
 ]
 
 MIDDLEWARE = [
@@ -77,6 +73,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'aplicaciones.eventos.context_processors.notificaciones_context_processor',
+                
                 
             ],
         },
@@ -123,9 +121,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-ec'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Guayaquil'
 
 USE_I18N = True
 

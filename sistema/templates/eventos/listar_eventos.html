@@ -1,35 +1,38 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Lista de Procesos - TACAE{% endblock %}
+{% block title %}Mis Eventos - TACAE{% endblock %}
 
 {% block content %}
-<div class="procesos-wrapper">
-  <h2>Procesos Registrados</h2>
-  <a href="{% url 'control_procesos:crear_proceso' %}" class="btn btn-create">Registrar Proceso</a>
-  {% if procesos %}
-    <table>
-      <thead>
-        <tr>
-          <th>Proceso</th>
-          <th>Carpeta</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for p in procesos %}
-        <tr>
-          <td>{{ p.proceso }}</td>
-          <td>{{ p.carpeta }}</td>
-          <td>
-            <a href="{% url 'control_procesos:ver_carpeta' p.id %}">Ver Carpeta</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>No hay procesos registrados.</p>
-  {% endif %}
+<div class="container mt-4">
+    <h2>Mis Eventos</h2>
+    {% if eventos %}
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Título</th>
+                    <th>Fecha del Evento</th>
+                    <th>Ubicación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for evento in eventos %}
+                <tr>
+                    <td>{{ evento.titulo }}</td>
+                    <td>{{ evento.fecha_evento|date:"d/m/Y H:i" }}</td>
+                    <td>{{ evento.ubicacion }}</td>
+                    <td>
+                        <a href="{% url 'eventos:editar_evento' evento.id %}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{% url 'eventos:eliminar_evento' evento.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No tienes eventos creados.</p>
+    {% endif %}
+    <a href="{% url 'eventos:crear_evento' %}" class="btn btn-primary">➕ Crear Evento</a>
 </div>
 {% endblock %}

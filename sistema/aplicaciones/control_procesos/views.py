@@ -189,23 +189,36 @@ def listar_respuestas_por_nombre(request, carpeta_id):
 
 
 
+@login_required
 def registrar_cuenta_por_cobrar(request, carpeta_id):
+    """Registra un nuevo cobro, permitiendo seleccionar un proceso de forma organizada."""
+    
     carpeta = get_object_or_404(Carpeta, id=carpeta_id)
 
     if request.method == "POST":
         form = CuentaPorCobrarForm(request.POST)
         if form.is_valid():
             cuenta = form.save(commit=False)
-            cuenta.carpeta = carpeta  # Relacionar con la carpeta
+            cuenta.carpeta = carpeta
             cuenta.save()
             return redirect("carpetas:ver_carpeta", carpeta_id=carpeta.id)
-
+    
     else:
         form = CuentaPorCobrarForm()
 
+    # 🌟 Obtener procesos organizados por carpeta
+    carpetas_con_procesos = {}
+    carpetas = Carpeta.objects.all()
+    
+    for carpeta in carpetas:
+        procesos = Proceso.objects.filter(carpeta=carpeta)
+        if procesos.exists():
+            carpetas_con_procesos[carpeta] = procesos
+
     return render(request, "control_procesos/registrar_cuenta.html", {
         "form": form,
-        "carpeta": carpeta
+        "carpeta": carpeta,
+        "carpetas_con_procesos": carpetas_con_procesos,  # Pasamos los procesos organizados
     })
 
 

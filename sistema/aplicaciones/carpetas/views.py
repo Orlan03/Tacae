@@ -5,7 +5,7 @@ from .forms import CarpetaForm, DocumentoForm
 login_required
 from django.shortcuts import render
 from .models import Carpeta
-from aplicaciones.control_procesos.models import Proceso, CuentaPorCobrar
+from aplicaciones.control_procesos.models import Proceso, CuentaPorCobrar, Respuesta
 from django.contrib import messages
 
 
@@ -33,30 +33,32 @@ def listar_carpetas(request):
     return render(request, 'carpetas/listar_carpetas.html', {'carpetas': carpetas})
 
 
-login_required
+@login_required
 def crear_carpeta(request, carpeta_id=None):
     """ Crea una nueva carpeta o subcarpeta dentro de otra carpeta. """
     carpeta_padre = None
     if carpeta_id:
-        carpeta_padre = get_object_or_404(Carpeta, id=carpeta_id)  # Buscar la carpeta padre si hay una
+        carpeta_padre = get_object_or_404(Carpeta, id=carpeta_id)
 
     if request.method == 'POST':
         form = CarpetaForm(request.POST)
         if form.is_valid():
             nueva_carpeta = form.save(commit=False)
-            nueva_carpeta.padre = carpeta_padre  # Asignar la carpeta padre si existe
+            nueva_carpeta.padre = carpeta_padre
             nueva_carpeta.save()
             
-            # Redirección corregida
+            # Redirección
             if nueva_carpeta.padre:
                 return redirect('carpetas:ver_carpeta', carpeta_id=nueva_carpeta.padre.id)
             else:
-                return redirect('carpetas:listar_carpetas')  # Si es una carpeta raíz, ir a la lista de carpetas
-
+                return redirect('carpetas:listar_carpetas')  # carpeta raíz
     else:
         form = CarpetaForm()
 
-    return render(request, 'carpetas/crear_carpeta.html', {'form': form, 'carpeta_padre': carpeta_padre})
+    return render(request, 'carpetas/crear_carpeta.html', {
+        'form': form,
+        'carpeta_padre': carpeta_padre
+    })
 
 @login_required
 def crear_subcarpeta(request, carpeta_id):
@@ -100,7 +102,8 @@ def ver_carpeta(request, carpeta_id):
     subcarpetas = carpeta.subcarpetas.all()
     documentos = carpeta.documentos.all()
     procesos = carpeta.procesos.all()
-    
+    cuentas = CuentaPorCobrar.objects.filter(carpeta=carpeta)
+    Respuestaespuestas = Respuesta.objects.filter(carpeta=carpeta)
     # Obtiene las cuentas por cobrar asociadas a la carpeta
     cuentas = CuentaPorCobrar.objects.filter(carpeta=carpeta)
 

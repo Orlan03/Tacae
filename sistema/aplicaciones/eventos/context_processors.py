@@ -5,14 +5,12 @@ from .models import Evento, Notificacion
 def notificaciones_context_processor(request):
     if request.user.is_authenticated:
         ahora = timezone.now()
-        # Filtra eventos en las próximas 24 horas
         proximos = Evento.objects.filter(
             usuario=request.user,
             fecha_evento__gte=ahora,
             fecha_evento__lte=ahora + timedelta(hours=24)
         )
         for e in proximos:
-            # Verificamos si ya hay una notificación para este evento
             existe = Notificacion.objects.filter(evento=e, usuario=request.user).exists()
             if not existe:
                 Notificacion.objects.create(
@@ -20,11 +18,8 @@ def notificaciones_context_processor(request):
                     evento=e,
                     mensaje=f"El evento '{e.titulo}' es en menos de 24 horas."
                 )
-        # Cargamos las notificaciones no leídas
+                print(f"Notificación creada para: {e.titulo}")  # Depuración
         notis_no_leidas = request.user.notificaciones.filter(leida=False)
     else:
         notis_no_leidas = []
-    
-    return {
-        'notificaciones_no_leidas': notis_no_leidas
-    }
+    return {'notificaciones_no_leidas': notis_no_leidas}

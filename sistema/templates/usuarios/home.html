@@ -4,59 +4,71 @@
 {% block title %}TACAE - Inicio{% endblock %}
 
 {% block content %}
-<div class="notifications-fixed">
-    <div class="bell-icon" onclick="toggleDropdown()">
-        <img src="{% static 'img/campana.png' %}" alt="Campana">
-        <span class="badge">{{ notificaciones_no_leidas|length }}</span>
-    </div>
-      
-    <div class="dropdown-content" id="notificationsDropdown">
-      {% if notificaciones_no_leidas %}
-        {% for noti in notificaciones_no_leidas %}
-          <div class="dropdown-item">
-            {{ noti.mensaje }}
-          </div>
-        {% endfor %}
-      {% else %}
-        <div class="dropdown-item">No tienes notificaciones</div>
-      {% endif %}
-      <div class="dropdown-footer">
-        <a href="{% url 'eventos:todas_notificaciones' %}">Ver todo</a>
-      </div>
-    </div>
-</div>
-  
+<!-- Encabezado principal -->
 <header class="home-header">
-    <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="home-logo">
-    <h1>Bienvenido a TACAE</h1>
-    <p>Sistema de Gestión Empresarial</p>
+  <img src="{% static 'img/tacae.jpg' %}" alt="TACAE Logo" class="home-logo">
+  <h1>Bienvenido a TACAE</h1>
+  <p>Sistema de Gestión Empresarial</p>
+  
+  <!-- Sección de acciones en el encabezado: campana + botón de cerrar sesión -->
+  <div class="header-actions">
+    <!-- Ícono de campana que abre el dropdown de notificaciones -->
+    <div class="bell-icon" onclick="toggleDropdown()">
+      <img src="{% static 'img/campana.png' %}" alt="Campana">
+      <span class="badge">
+        {{ notificaciones_no_leidas|length }}
+      </span>
+    </div>
+    
+    <!-- Botón de Cerrar Sesión (ajusta la URL según tu proyecto) -->
+    <a href="{% url 'login' %}" class="logout-btn">Cerrar Sesión</a>
+  </div>
 </header>
 
-<section class="home-content">
-    {% if user.is_authenticated and user.is_staff %}
-      <div class="card">
-        <h2>Gestión de Empleados</h2>
-        <p>Administra la información de tus empleados de forma eficiente.</p>
-        <a href="{% url 'lista_empleados' %}" class="card-btn">Ver Empleados</a>
+<!-- Dropdown de Notificaciones -->
+<div class="dropdown-content" id="notificationsDropdown">
+  {% if notificaciones_no_leidas %}
+    {% for evento in notificaciones_no_leidas %}
+      <div class="dropdown-item">
+        <strong>{{ evento.titulo }}</strong><br>
+        Fecha: {{ evento.fecha_evento|date:"d/m/Y" }}
       </div>
-    {% endif %}
-
-    <div class="card">
-      <h2>INFORME PERICIALES GRUPO TACAE</h2>
-      <p>Gestiona carpetas y documentos de forma organizada.</p>
-      <a href="{% url 'carpetas:listar_carpetas' %}" class="btn btn-primary">Ingresar</a>
+    {% endfor %}
+  {% else %}
+    <div class="dropdown-item">No tienes notificaciones</div>
+  {% endif %}
+  <div class="dropdown-footer">
+    <a href="{% url 'eventos:todas_notificaciones' %}">Ver todo</a>
   </div>
- 
-
-    </div>
-    <div class="card">
-      <h2>Cerrar Sesión</h2>
-      <p>Genera informes y analiza el rendimiento de la empresa.</p>
-      <a href="{% url 'login' %}" class="card-btn">Cerrar Sesión</a>
-    </div>
-</section>
 </div>
 
+<!-- Contenido principal de la página -->
+<section class="home-content">
+  <!-- Ejemplo: Solo visible si el usuario es staff -->
+  {% if user.is_authenticated and user.is_staff %}
+    <div class="card">
+      <h2>Gestión de Empleados</h2>
+      <p>Administra la información de tus empleados de forma eficiente.</p>
+      <a href="{% url 'lista_empleados' %}" class="card-btn">Ver Empleados</a>
+    </div>
+  {% endif %}
+
+  <!-- Ejemplo: Card de Carpetas/Documentos -->
+  <div class="card">
+    <h2>INFORME PERICIALES GRUPO TACAE</h2>
+    <p>Gestiona carpetas y documentos de forma organizada.</p>
+    <a href="{% url 'carpetas:listar_carpetas' %}" class="card-btn">Ingresar</a>
+  </div>
+
+  <!-- Ejemplo: Card para Eventos -->
+  <div class="card">
+    <h2>Eventos</h2>
+    <p>Mantente informado sobre nuestros próximos eventos y actividades.</p>
+    <a href="{% url 'eventos:listar_eventos' %}" class="btn btn-primary">Ver Eventos</a>
+  </div>
+</section>
+
+<!-- Estilos CSS -->
 <style>
   /* Estilos globales */
   body {
@@ -66,16 +78,12 @@
     margin: 0;
     padding: 0;
   }
-  .home-wrapper {
-    width: 90%;
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 20px;
-  }
   /* Encabezado */
   .home-header {
     text-align: center;
     margin-bottom: 20px;
+    position: relative;
+    padding: 20px 0;
   }
   .home-logo {
     width: 120px;
@@ -84,11 +92,33 @@
   .home-header h1 {
     font-size: 2rem;
     color: #003366;
-    margin: 10px 0;
+    margin: 10px 0 5px;
   }
   .home-header p {
     font-size: 1.1rem;
     color: #555;
+    margin: 0;
+  }
+  /* Acciones del encabezado (campana + cerrar sesión) */
+  .header-actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .logout-btn {
+    background: #a22c2c;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  .logout-btn:hover {
+    background: #c62828;
   }
   /* Contenido principal */
   .home-content {
@@ -96,6 +126,7 @@
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
+    padding: 20px;
   }
   .card {
     background: #fff;
@@ -105,6 +136,11 @@
     width: 300px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
   }
   .card h2 {
     font-size: 1.5rem;
@@ -128,25 +164,28 @@
   .card-btn:hover {
     background: #002244;
   }
-  
-  /* Estilos para la campanita de notificaciones fija en la esquina superior derecha */
-  .notifications-fixed {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-  }
-  .bell-icon img {
-    width: 30px;
-    height: auto;
-    object-fit: contain;
-  }
+  /* Campana de notificaciones */
   .bell-icon {
     position: relative;
     display: inline-block;
     cursor: pointer;
     font-size: 24px;
     color: #003366;
+  }
+  .bell-icon img {
+    width: 30px;
+    transition: transform 0.5s ease;
+  }
+  .bell-icon:hover img {
+    animation: swing 0.5s ease;
+  }
+  @keyframes swing {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(15deg); }
+    40% { transform: rotate(-10deg); }
+    60% { transform: rotate(5deg); }
+    80% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
   }
   .bell-icon .badge {
     position: absolute;
@@ -158,16 +197,18 @@
     border-radius: 50%;
     padding: 2px 6px;
   }
+  /* Dropdown de notificaciones */
   .dropdown-content {
     display: none;
     position: absolute;
-    top: 30px;
-    right: 0;
+    top: 40px;
+    right: 0px;
     width: 250px;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
   }
   .dropdown-item {
     padding: 10px;
@@ -192,6 +233,7 @@
   }
 </style>
 
+<!-- Script para mostrar/ocultar dropdown -->
 <script>
   function toggleDropdown() {
     var dropdown = document.getElementById("notificationsDropdown");
@@ -203,7 +245,8 @@
   }
   window.onclick = function(event) {
     var dropdown = document.getElementById("notificationsDropdown");
-    if (!event.target.closest('.bell-icon')) {
+    // Cierra el dropdown si se hace clic fuera de él
+    if (!event.target.closest('.bell-icon') && !event.target.closest('.dropdown-content')) {
       dropdown.style.display = "none";
     }
   }
