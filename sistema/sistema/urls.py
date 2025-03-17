@@ -11,6 +11,7 @@ urlpatterns = [
     path('documentos/', include(('aplicaciones.carpetas.urls', 'carpetas'), namespace='carpetas')),
     path('eventos/', include(('aplicaciones.eventos.urls', 'eventos'), namespace='eventos')),
     path('procesos/', include(('aplicaciones.control_procesos.urls', 'procesos'), namespace='procesos')),
+    path('notificaciones/', include(('aplicaciones.eventos.urls', 'eventos'), namespace='notificaciones')),
 
 
    

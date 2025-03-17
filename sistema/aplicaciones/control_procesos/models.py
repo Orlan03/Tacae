@@ -1,6 +1,6 @@
 from django.db import models
 from aplicaciones.carpetas.models import Carpeta
-
+from django.contrib.auth.models import User
 
 class Proceso(models.Model):
     sorteo = models.DateField(blank=True, null=True)
@@ -52,3 +52,16 @@ class CuentaPorCobrar(models.Model):
 
     def __str__(self):
         return f"{self.proceso.proceso} - {self.cobro}"
+
+
+class Notificacion(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notificaciones_control")
+    proceso = models.ForeignKey(Proceso, on_delete=models.CASCADE, null=True, blank=True)
+    mensaje = models.CharField(max_length=255)
+    leida = models.BooleanField(default=False)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    # Opcionalmente, un campo para distinguir el tipo de notificación
+    tipo = models.CharField(max_length=50, default="general")
+
+    def __str__(self):
+        return self.mensaje

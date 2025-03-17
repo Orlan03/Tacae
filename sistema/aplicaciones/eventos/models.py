@@ -11,7 +11,7 @@ class Evento(models.Model):
         return self.titulo
 
 class Notificacion(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notificaciones")
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notificaciones_eventos")
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
     mensaje = models.CharField(max_length=255)
     leida = models.BooleanField(default=False)

@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.utils import timezone
 from .forms import EventoForm
 from .models import Evento, Notificacion
+from itertools import chain
 
 @login_required
 def crear_evento(request):
@@ -56,3 +57,25 @@ def todas_notificaciones(request):
     return render(request, 'eventos/todas_notificaciones.html', {
         'notificaciones': notificaciones
     })
+    
+
+@login_required
+def notificaciones_unificadas(request):
+    # Obtén las notificaciones NO leídas para eventos y control
+    notis_eventos = request.user.notificaciones_eventos.filter(leida=False)
+    notis_control = request.user.notificaciones_control.filter(leida=False)
+    
+    # Combina ambos querysets y ordénalos por fecha_creacion (más recientes primero)
+    notificaciones = sorted(
+        chain(notis_eventos, notis_control),
+        key=lambda n: n.fecha_creacion,
+        reverse=True
+    )
+    
+    # Marcar cada notificación como leída
+    for noti in notificaciones:
+        noti.leida = True
+        noti.save()
+    
+    # Ahora, la plantilla recibirá todas las notificaciones (ya leídas)
+    return render(request, 'notificaciones/unificadas.html', {'notificaciones': notificaciones})
