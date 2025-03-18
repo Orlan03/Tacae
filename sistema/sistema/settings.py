@@ -76,6 +76,7 @@ TEMPLATES = [
                 'aplicaciones.eventos.context_processors.notificaciones_eventos_context_processor',
                 'aplicaciones.control_procesos.context_processors.procesos_limite_context_processor',
                 'aplicaciones.eventos.context_processors.notificaciones_unificadas_context_processor',
+                
             ],
         },
     },
@@ -145,3 +146,4 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
